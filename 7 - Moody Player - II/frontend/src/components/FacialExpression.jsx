@@ -1,15 +1,18 @@
 import React, { useRef } from "react";
 import * as faceapi from "face-api.js";
+import "./facialExpression.css";
 
 export default function FacialExpression() {
   const videoRef = useRef();
 
+  // Models Load karna
   const loadModels = async () => {
     const MODEL_URL = "/models"; // models in public/models
     await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
     await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
   };
 
+  // Webcam Start karna
   const startVideo = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -21,11 +24,13 @@ export default function FacialExpression() {
       .catch((err) => console.error("Error accessing webcam:", err));
   };
 
+  // Mood Detect Karna
   async function detectMood() {
     const detections = await faceapi
       .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
       .withFaceExpressions();
 
+    // Sabse Zyada Probability Wala Expression Choose Karna
     let mostProableExpression = 0;
     let _expression = "";
 
@@ -46,11 +51,8 @@ export default function FacialExpression() {
   loadModels().then(startVideo);
 
   return (
-    <div style={{ textAlign: "center" }}>
-      {/* <h2>User Mood: {mood} 🎭</h2> */}
-      <div style={{ position: "relative", display: "inline-block" }}>
-        <video ref={videoRef} autoPlay muted width="720" height="560" />
-      </div>
+    <div className="mood-element">
+      <video ref={videoRef} autoPlay muted className="user-video-feed" />
       <button onClick={detectMood}>Detect Mood</button>
     </div>
   );
