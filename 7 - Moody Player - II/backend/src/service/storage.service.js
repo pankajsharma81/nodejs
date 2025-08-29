@@ -1,4 +1,5 @@
 var ImageKit = require("imagekit");
+const { default: mongoose } = require("mongoose");
 
 var imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
@@ -11,7 +12,9 @@ function uploadFile(file) {
     imagekit.upload(
       {
         file: file.buffer,
-        fileName: "hello-cohort",
+        // fileName: Math.random().toString(36).substring(10),
+        fileName:(new mongoose.Types.ObjectId()).toString(),
+        folder:"moody-player"
       },
       (error, result) => {
         if (error) {
